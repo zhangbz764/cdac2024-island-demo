@@ -1,174 +1,58 @@
-package org.instaaa;
+package utils;
 
-import blobDetection.Blob;
-import blobDetection.BlobDetection;
-import blobDetection.EdgeVertex;
-import processing.core.PApplet;
+import igeo.ICurve;
+import igeo.IPoint;
 import wblut.geom.*;
-import wblut.processing.WB_Render;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * description
  *
- * @author Baizhou Zhang zhangbz
- * @project cdac-island
- * @date 2024/11/2
- * @time 14:05
+ * @author zbz_lennovo
+ * @project cdac2024-island-demo
+ * @date 2024/11/3
+ * @time 15:15
  */
-public class BlobIsland {
-    // BlobDetection instances
-    private BlobDetection bd;
-    private float blobThreshold = 0.3f;
-
-    // island geometries
-    private List<WB_PolyLine> islands; // might have multiple island
-
-    private List<Bridge> bridges;
-
-    private Bridge selectedBridge;
-
-    /* ------------- constructor ------------- */
-
-    public BlobIsland(int imgW, int imgH) {
-        this.bd = new BlobDetection(imgW, imgH);
-        bd.setPosDiscrimination(false);
-        bd.setThreshold(blobThreshold);
-    }
-
-    /* ------------- member function ------------- */
+public class UtilsZBZ {
+    public static final WB_GeometryFactory wbgf = new WB_GeometryFactory();
 
     /**
-     * update island boundary by BlobDetection
-     * update bridges
+     * IPoint -> WB_Point
      *
-     * @param pixels
-     * @return void
+     * @param point input IPoint
+     * @return wblut.geom.WB_Point
      */
-    public void updateBoundaryAndBridges(int[] pixels) {
-        this.islands = new ArrayList<>();
-
-        bd.computeBlobs(pixels);
-        System.out.println(bd.getBlobNb());
-
-        Blob b;
-        EdgeVertex eA;
-
-        for (int n = 0; n < bd.getBlobNb(); n++) {
-            List<WB_Point> blobPts = new ArrayList<>();
-
-            b = bd.getBlob(n);
-
-            for (int m = 0; m < b.getEdgeNb(); m++) {
-                eA = b.getEdgeVertexA(m);
-                if (eA != null) {
-                    blobPts.add(new WB_Point(eA.x * bd.imgWidth, eA.y * bd.imgHeight));
-                }
-            }
-
-            // last one
-            EdgeVertex eB = b.getEdgeVertexB(b.getEdgeNb() - 1);
-            blobPts.add(new WB_Point(eB.x * bd.imgWidth, eB.y * bd.imgHeight));
-
-            blobPts.add(blobPts.get(0));
-
-            islands.add(new WB_PolyLine(blobPts));
-        }
-
-        System.out.println("islands.size()  " + islands.size());
-        for (WB_PolyLine island : islands) {
-            System.out.println(island.getNumberOfPoints());
-        }
-
-        computeBridges(islands.get(0), 3);
+    public static WB_Point IPointToWB_Point(final IPoint point) {
+        return new WB_Point(point.x(), point.y(), point.z());
     }
 
     /**
-     * compute bridge position and direction by given number
+     * ICurve -> WB_Geometry (WB_PolyLine, WB_Polygon, WB_Segment)
      *
-     * @param island
-     * @param bridgeNum
-     * @return void
+     * @param curve input ICurve
+     * @return wblut.geom.WB_Geometry2D
      */
-    private void computeBridges(WB_PolyLine island, int bridgeNum) {
-        this.bridges = new ArrayList<>();
-
-        double length = getPolyLength(island);
-        double step = length / bridgeNum;
-
-        for (int i = 0; i < bridgeNum; i++) {
-            double[] posAndDir = getPointOnPolyEdge(island, step * i);
-            WB_Vector dir = new WB_Vector(posAndDir[2], posAndDir[3]);
-            dir.rotateAboutOrigin2DSelf(Math.PI * 0.5);
-
-            bridges.add(new Bridge(
-                    new WB_Point(posAndDir[0], posAndDir[1]), new WB_Vector(dir), 15
-            ));
-        }
-    }
-
-    public void updateBridgeByNewPos(double x, double y) {
-        WB_Point newPos = new WB_Point(x, y);
-        if (selectedBridge == null) {
-            // find closest
-            for (int i = 0; i < bridges.size(); i++) {
-                Bridge bri = bridges.get(i);
-                if (bri.getPos().getDistance2D(newPos) <= Bridge.posRadius) {
-                    this.selectedBridge = bri;
-                    break;
-                }
+    public static WB_Geometry2D ICurveToWB(final ICurve curve) {
+        if (curve.cpNum() > 2 && !curve.isClosed()) {
+            WB_Point[] points = new WB_Point[curve.cpNum()];
+            for (int i = 0; i < curve.cpNum(); i++) {
+                points[i] = new WB_Point(curve.cp(i).x(), curve.cp(i).y(), curve.cp(i).z());
             }
+            return wbgf.createPolyLine(points);
+        } else if (curve.cpNum() > 2 && curve.isClosed()) {
+            WB_Point[] points = new WB_Point[curve.cpNum()];
+            for (int i = 0; i < curve.cpNum(); i++) {
+                points[i] = new WB_Point(curve.cp(i).x(), curve.cp(i).y(), curve.cp(i).z());
+            }
+            return wbgf.createSimplePolygon(points);
+        } else if (curve.cpNum() == 2) {
+            WB_Point start = new WB_Point(curve.cp(0).x(), curve.cp(0).y(), curve.cp(0).z());
+            WB_Point end = new WB_Point(curve.cp(1).x(), curve.cp(1).y(), curve.cp(1).z());
+            return new WB_Segment(start, end);
         } else {
-            // set new pos
-            WB_Point closestPoint2D = WB_GeometryOp2D.getClosestPoint2D(newPos, this.getIsland());
-            int[] ids = pointOnWhichEdgeIndices(closestPoint2D, this.getIsland());
-            WB_Coord direction = this.getIsland().getSegment(ids[0]).getDirection();
-            WB_Vector dir = new WB_Vector(direction.xd(), direction.yd());
-            dir.rotateAboutOrigin2DSelf(Math.PI * 0.5);
-
-            selectedBridge.setPosAndDir(closestPoint2D, dir);
+            System.out.println("***MAYBE OTHER TYPE OF GEOMETRY***");
+            return null;
         }
     }
-
-    public void clearSelectedBridge() {
-        this.selectedBridge = null;
-    }
-
-    /* ------------- setter & getter ------------- */
-
-    public List<WB_PolyLine> getAllIslands() {
-        return islands;
-    }
-
-    public WB_PolyLine getIsland() {
-        return islands.get(0);
-    }
-
-    /* ------------- draw ------------- */
-
-    public void draw(PApplet app, WB_Render render) {
-        if (islands != null) {
-            app.pushStyle();
-            app.noFill();
-            app.stroke(255, 0, 0);
-            app.strokeWeight(3);
-
-            render.drawPolylineEdges(islands);
-
-            app.popStyle();
-        }
-
-        if (bridges != null) {
-            for (Bridge bridge : bridges) {
-                bridge.draw(app, render);
-            }
-        }
-    }
-
-    /* ------------- utils ------------- */
 
     /**
      * get the whole length of the polyline (replace the method in HE_Mesh)
@@ -176,7 +60,7 @@ public class BlobIsland {
      * @param poly polyline / polygon
      * @return double
      */
-    private double getPolyLength(final WB_PolyLine poly) {
+    public static double getPolyLength(final WB_PolyLine poly) {
         double plLength = 0;
         if (poly instanceof WB_Polygon) {
             WB_Polygon polygon = (WB_Polygon) poly;
@@ -215,7 +99,7 @@ public class BlobIsland {
      * @param dist distance
      * @return wblut.geom.WB_Point
      */
-    private double[] getPointOnPolyEdge(final WB_PolyLine poly, final double dist) {
+    public static double[] getPointOnPolyEdge(final WB_PolyLine poly, final double dist) {
         if (dist <= 0) {
             return new double[]{
                     poly.getPoint(0).xd(), poly.getPoint(0).yd(),
@@ -260,7 +144,7 @@ public class BlobIsland {
      * @param poly input polygon
      * @return int[] - indices of result segment
      */
-    private int[] pointOnWhichEdgeIndices(final WB_Point p, final WB_PolyLine poly) {
+    public static int[] pointOnWhichEdgeIndices(final WB_Point p, final WB_PolyLine poly) {
         int[] result = new int[]{-1, -1};
         if (poly instanceof WB_Polygon) {
             // polygon
@@ -299,7 +183,7 @@ public class BlobIsland {
      * @param seg input segment
      * @return boolean
      */
-    private boolean pointOnSegment(final WB_Point p, final WB_Segment seg) {
+    public static boolean pointOnSegment(final WB_Point p, final WB_Segment seg) {
         double crossValue = WB_CoordOp2D.cross2D(seg.getDirection(), p.sub(seg.getOrigin()));
         if (Math.abs(crossValue) < 0.0001) {
             double minX = Math.min(seg.getOrigin().xd(), seg.getEndpoint().xd());

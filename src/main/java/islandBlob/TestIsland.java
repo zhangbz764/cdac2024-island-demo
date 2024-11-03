@@ -1,11 +1,9 @@
-package org.instaaa;
+package islandBlob;
 
 import Guo_Cam.CameraController;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
-import wblut.geom.WB_GeometryOp;
-import wblut.geom.WB_Point;
 import wblut.processing.WB_Render;
 
 /**
