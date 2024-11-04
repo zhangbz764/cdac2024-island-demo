@@ -43,6 +43,9 @@ public class TestIsland3DM extends PApplet {
         // load 3dm file
         Island3DM island3DM = new Island3DM(totalIsland);
         island3DM.load3dmIsland("src/main/resources/island_rh4.3dm");
+        IslandBridge.maxLength = 400;
+        IslandBridge.posRadius = 50;
+        IslandBridge.width = 50;
 
         this.islandObjs = island3DM.getIslandObjs();
     }
@@ -75,13 +78,6 @@ public class TestIsland3DM extends PApplet {
             render.drawPolygonEdges(env);
         }
 
-        // bridge points
-        noStroke();
-        fill(255, 89, 98);
-        for (WB_Point bri : islandObjs[id].getBridgePts()) {
-            ellipse(bri.xf(), bri.yf(), 40, 40);
-        }
-
         // bridges
         stroke(255);
         strokeWeight(1);
@@ -93,8 +89,30 @@ public class TestIsland3DM extends PApplet {
         for (IslandBridge bri : islandObjs[id].getBridges()) {
             bri.drawArea(this);
         }
+        noStroke();
+        fill(255, 89, 98);
+        for (IslandBridge bri : islandObjs[id].getBridges()) {
+            ellipse(bri.getStart().xf(), bri.getStart().yf(), IslandBridge.posRadius, IslandBridge.posRadius);
+            ellipse(bri.getEnd().xf(), bri.getEnd().yf(), IslandBridge.posRadius, IslandBridge.posRadius);
+        }
 
         popStyle();
+    }
+
+    @Override
+    public void mouseDragged() {
+        if (mouseButton == LEFT) {
+            double[] pointer = gcam.pick3dXYPlaneDouble(mouseX, mouseY);
+            float x = (float) (pointer[0]);
+            float y = (float) (pointer[1]);
+
+            islandObjs[currIsland].updateBridgeByNewPos(x, y);
+        }
+    }
+
+    @Override
+    public void mouseReleased() {
+        islandObjs[currIsland].clearSelectedBridge();
     }
 
     @Override

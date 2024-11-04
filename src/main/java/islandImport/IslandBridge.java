@@ -14,7 +14,9 @@ import wblut.geom.WB_Vector;
  * @time 10:08
  */
 public class IslandBridge {
-    private static final double maxLength = 300;
+    public static double maxLength = 300;
+    public static float posRadius = 50;
+    public static double width = 30;
 
     private WB_Point start;
     private WB_Point end;
@@ -22,14 +24,23 @@ public class IslandBridge {
 
     private WB_Vector dir;
 
-    private double width = 30;
-
     /* ------------- constructor ------------- */
 
     public IslandBridge(WB_Point start, WB_Point end) {
         this.start = start;
         this.end = end;
 
+        updateBridgeGeos();
+    }
+
+    /* ------------- member function ------------- */
+
+    public void updateNewEnd(WB_Point newEndPt){
+        end.set(newEndPt);
+        updateBridgeGeos();
+    }
+
+    private void updateBridgeGeos(){
         this.dir = new WB_Vector(start, end);
         dir.normalizeSelf();
 
@@ -40,9 +51,6 @@ public class IslandBridge {
 
         this.bridgeSide = new WB_Segment[]{leftSide, rightSide};
     }
-
-    /* ------------- member function ------------- */
-
 
     /* ------------- setter & getter ------------- */
 

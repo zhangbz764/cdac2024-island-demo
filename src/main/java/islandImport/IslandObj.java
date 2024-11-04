@@ -1,8 +1,6 @@
 package islandImport;
 
-import wblut.geom.WB_GeometryOp;
-import wblut.geom.WB_Point;
-import wblut.geom.WB_Polygon;
+import wblut.geom.*;
 
 /**
  * description
@@ -13,12 +11,14 @@ import wblut.geom.WB_Polygon;
  * @time 13:41
  */
 public class IslandObj {
-
     private WB_Polygon border;
     private WB_Polygon island;
     private WB_Polygon[] envs;
     private WB_Point[] bridgePts;
     private IslandBridge[] bridges;
+
+    // interaction
+    private IslandBridge selectedBridge;
 
     /* ------------- constructor ------------- */
 
@@ -40,6 +40,29 @@ public class IslandObj {
 
     /* ------------- member function ------------- */
 
+    public void updateBridgeByNewPos(double x, double y) {
+        WB_Point newPos = new WB_Point(x, y);
+        if (selectedBridge == null) {
+            // find closest
+            for (int i = 0; i < bridges.length; i++) {
+                IslandBridge bri = bridges[i];
+                if (bri.getEnd().getDistance2D(newPos) <= IslandBridge.posRadius) {
+                    this.selectedBridge = bri;
+                    break;
+                }
+            }
+        } else {
+            // set new end pos
+            WB_Point closestPoint2D = WB_GeometryOp2D.getClosestPoint2D(newPos, (WB_PolyLine) island);
+            if (closestPoint2D.getDistance2D(selectedBridge.getStart()) <= IslandBridge.maxLength) {
+                selectedBridge.updateNewEnd(closestPoint2D);
+            }
+        }
+    }
+
+    public void clearSelectedBridge(){
+        this.selectedBridge = null;
+    }
 
     /* ------------- setter & getter ------------- */
 
