@@ -25,7 +25,7 @@ public class TestIsland3DM extends PApplet {
         size(1600, 900, P3D);
     }
 
-    private Island3DM island3DM;
+    private IslandObj[] islandObjs;
 
     private CameraController gcam;
     private WB_Render render;
@@ -41,14 +41,16 @@ public class TestIsland3DM extends PApplet {
         gcam.setPanButton(CameraController.MOUSE_RIGHTBUTTON);
 
         // load 3dm file
-        this.island3DM = new Island3DM(totalIsland);
-        island3DM.load3dmIsland("src/main/resources/island.3dm");
+        Island3DM island3DM = new Island3DM(totalIsland);
+        island3DM.load3dmIsland("src/main/resources/island_rh4.3dm");
+
+        this.islandObjs = island3DM.getIslandObjs();
     }
 
     /* ------------- draw ------------- */
 
     public void draw() {
-        background(44, 61, 163);
+        background(83, 192, 231);
         gcam.drawSystem(500);
 
         drawIsland(currIsland);
@@ -57,23 +59,41 @@ public class TestIsland3DM extends PApplet {
     private void drawIsland(int id) {
         pushStyle();
 
-        noFill();
+        // border and island
         stroke(255);
         strokeWeight(3);
-        render.drawPolygonEdges(island3DM.getBorders()[id]);
-        render.drawPolygonEdges(island3DM.getIslands()[id]);
+        noFill();
+        render.drawPolygonEdges(islandObjs[id].getBorder());
+        fill(119, 195, 153);
+        render.drawPolygonEdges(islandObjs[id].getIsland());
 
-        stroke(200);
+        // environments
+        stroke(255);
         strokeWeight(1);
-        for (WB_Polygon env : island3DM.getEnvs()[id]) {
+        fill(119, 195, 153);
+        for (WB_Polygon env : islandObjs[id].getEnvs()) {
             render.drawPolygonEdges(env);
         }
 
+        // bridge points
         noStroke();
         fill(255, 89, 98);
-        for (WB_Point bri : island3DM.getBridgePts()[id]) {
-            ellipse(bri.xf(), bri.yf(), 20, 20);
+        for (WB_Point bri : islandObjs[id].getBridgePts()) {
+            ellipse(bri.xf(), bri.yf(), 40, 40);
         }
+
+        // bridges
+        stroke(255);
+        strokeWeight(1);
+        for (IslandBridge bri : islandObjs[id].getBridges()) {
+            render.drawSegment2D(bri.getBridgeSide());
+        }
+        noStroke();
+        fill(128);
+        for (IslandBridge bri : islandObjs[id].getBridges()) {
+            bri.drawArea(this);
+        }
+
         popStyle();
     }
 
