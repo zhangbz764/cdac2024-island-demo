@@ -16,7 +16,7 @@ import wblut.geom.WB_Vector;
 public class IslandBridge {
     public static double maxLength = 300;
     public static float posRadius = 50;
-    public static double width = 30;
+    public static double width = 50;
 
     private WB_Point start;
     private WB_Point end;
