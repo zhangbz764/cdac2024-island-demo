@@ -12,7 +12,7 @@ import processing.core.PFont;
  * @time 8:39
  */
 public abstract class Controller {
-    protected MyFunction myFunction;
+    protected String guiType = "";
 
     protected int[] position = new int[]{0, 0};
     protected int[] size = new int[]{0, 0};
@@ -37,12 +37,13 @@ public abstract class Controller {
 
     public abstract void enableMouseClickEvent(float mouseX, float mouseY);
 
-    /* ------------- setter & getter ------------- */
+    public abstract void enableMouseDragEvent(float mouseX, float mouseY);
 
-    public Controller setMyFunction(MyFunction myFunction) {
-        this.myFunction = myFunction;
-        return this;
-    }
+    public abstract void enableMousePressEvent(float mouseX, float mouseY);
+
+    public abstract void enableMouseReleaseEvent(float mouseX, float mouseY);
+
+    /* ------------- setter & getter ------------- */
 
     public Controller setPosition(int x, int y) {
         this.position = new int[]{x, y};
@@ -70,6 +71,11 @@ public abstract class Controller {
         return this;
     }
 
+    public Controller setColorForeground(int color) {
+        this.colorForeground = color;
+        return this;
+    }
+
     public Controller setColorActive(int color) {
         this.colorActive = color;
         return this;
@@ -78,6 +84,10 @@ public abstract class Controller {
     public Controller setColorLabel(int color) {
         this.colorLabel = color;
         return this;
+    }
+
+    public String getName() {
+        return name;
     }
 
     /* ------------- draw ------------- */

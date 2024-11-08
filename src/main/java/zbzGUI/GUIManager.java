@@ -22,7 +22,7 @@ public class GUIManager {
         this.controllers = new ArrayList<>();
     }
 
-    /* ------------- member function ------------- */
+    /* ------------- member function: add controller ------------- */
 
     public Button addButton(String name) {
         Button button = new Button(name);
@@ -30,14 +30,64 @@ public class GUIManager {
         return button;
     }
 
+    public Slider addSlider(String name) {
+        Slider slider = new Slider(name);
+        this.controllers.add(slider);
+        return slider;
+    }
+
+    public ImageButton addImageButton(String name) {
+        ImageButton imageButton = new ImageButton(name);
+        this.controllers.add(imageButton);
+        return imageButton;
+    }
+
+    /* ------------- member function: event listener ------------- */
+
     public void listenMouseClicked(float mouseX, float mouseY) {
         for (Controller controller : controllers) {
             controller.enableMouseClickEvent(mouseX, mouseY);
         }
     }
 
+    public void listenMouseDragged(float mouseX, float mouseY) {
+        for (Controller controller : controllers) {
+            if (controller.guiType.equals("Slider")) {
+                controller.enableMouseDragEvent(mouseX, mouseY);
+            }
+        }
+    }
+
+    public void listenMousePressed(float mouseX, float mouseY) {
+        for (Controller controller : controllers) {
+            if (controller.guiType.equals("Slider")) {
+                controller.enableMousePressEvent(mouseX, mouseY);
+            }
+        }
+    }
+
+    public void listenMouseReleased(float mouseX, float mouseY) {
+        for (Controller controller : controllers) {
+            if (controller.guiType.equals("Slider")) {
+                controller.enableMouseReleaseEvent(mouseX, mouseY);
+            }
+        }
+    }
+
     /* ------------- setter & getter ------------- */
 
+    public List<Controller> getControllers() {
+        return controllers;
+    }
+
+    public Controller getControllerByName(String name) {
+        for (Controller controller : controllers) {
+            if (controller.getName().equals(name)) {
+                return controller;
+            }
+        }
+        return null;
+    }
 
     /* ------------- draw ------------- */
 
