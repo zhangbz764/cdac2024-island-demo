@@ -4,6 +4,8 @@ import Guo_Cam.CameraController;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
+import zbzGUI.BarChart;
+import zbzGUI.Controller;
 import zbzGUI.GUIManager;
 import zbzGUI.ImageButton;
 
@@ -56,8 +58,8 @@ public class TestGUI extends PApplet {
                 .setFont(font, 25)
                 .setLabel("按钮1")
 
-                .setColorBackground(0xff0000ff)
-                .setColorActive(0xff00ffff)
+                .setColorBackground(0xd3404040)
+                .setColorActive(0xd3757575)
                 .setColorLabel(0xffffffff)
         ;
         guiManager.addButton("button2")
@@ -69,8 +71,8 @@ public class TestGUI extends PApplet {
                 .setFont(font, 25)
                 .setLabel("按钮2")
 
-                .setColorBackground(0xff0000ff)
-                .setColorActive(0xff00ffff)
+                .setColorBackground(0xd3404040)
+                .setColorActive(0xd3757575)
                 .setColorLabel(0xffffffff)
         ;
         guiManager.addButton("button3")
@@ -82,8 +84,8 @@ public class TestGUI extends PApplet {
                 .setFont(font, 25)
                 .setLabel("按钮3")
 
-                .setColorBackground(0xff0000ff)
-                .setColorActive(0xff00ffff)
+                .setColorBackground(0xd3404040)
+                .setColorActive(0xd3757575)
                 .setColorLabel(0xffffffff)
         ;
 
@@ -98,10 +100,10 @@ public class TestGUI extends PApplet {
                 .setFont(font, 25)
                 .setLabel("滑条3")
 
-                .setColorBackground(0xff000000)
-                .setColorForeground(0xff0000ff)
-                .setColorActive(0xff00ffff)
-                .setColorLabel(0xff000000)
+                .setColorBackground(0xd3404040)
+                .setColorForeground(0xd3525252)
+                .setColorActive(0xd38b8b8b)
+                .setColorLabel(0xffffffff)
         ;
 
         guiManager.addImageButton("imageButton1")
@@ -111,11 +113,7 @@ public class TestGUI extends PApplet {
                 .setPosition(500, 100)
                 .setSize(400, 150)
 
-                .setFont(font, 25)
-                .setLabel("切換圖片")
-
-                .setColorLabel(0xff000000)
-                .setColorActive(0xff00ffff)
+                .setColorActive(0xd38b8b8b)
         ;
 
         guiManager.addImageButton("imageButton2")
@@ -125,11 +123,28 @@ public class TestGUI extends PApplet {
                 .setPosition(500, 400)
                 .setSize(300, 200)
 
-                .setFont(font, 25)
-                .setLabel("切換圖片")
+                .setColorActive(0xd38b8b8b)
+        ;
 
-                .setColorLabel(0xff000000)
-                .setColorActive(0x7900ffff)
+        guiManager.addBarChart("land_use_type_ratio")
+                .setPosition(100, 700)
+                .setSize(600, 250)
+
+                .setChartRange(0, 1)
+                .setChartData(
+                        new String[]{"Res", "Edu", "Com", "Ind"},
+                        new double[]{0.3, 0.1, 0.4, 0.2}
+                )
+                .setOriginLabel("0")
+                .setXAxisLabel("TYPE")
+                .setYAxisLabel("RATIO")
+                .showInteger(false)
+
+                .setFont(font, 20)
+
+                .setColorBackground(0xd3404040)
+                .setColorForeground(0xd38b8b8b)
+                .setColorLabel(0xffffffff)
         ;
 
     }
@@ -137,7 +152,7 @@ public class TestGUI extends PApplet {
     /* ------------- draw ------------- */
 
     public void draw() {
-        background(255);
+        background(52, 83, 69);
         gcam.drawSystem(100);
 
         gcam.begin2d();
@@ -166,6 +181,17 @@ public class TestGUI extends PApplet {
     @Override
     public void mouseReleased() {
         guiManager.listenMouseReleased(mouseX, mouseY);
+    }
+
+    @Override
+    public void keyPressed() {
+        if (key == '1') {
+            BarChart landUseTypeRatio = (BarChart) guiManager.getControllerByName("land_use_type_ratio");
+            landUseTypeRatio.setChartData(
+                    new String[]{"Res", "Edu", "Com", "Ind"},
+                    new double[]{Math.random(), Math.random(), Math.random(), Math.random()}
+            );
+        }
     }
 
     /* ------------- functions ------------- */

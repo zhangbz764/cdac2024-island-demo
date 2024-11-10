@@ -12,12 +12,12 @@ import processing.core.PImage;
  * @time 8:40
  */
 public class ImageButton extends Controller {
-    float fadeInDuration = 0.1f;           // 淡入时长 0.3 秒
-    float fadeOutDuration = 0.3f;          // 淡出时长 0.7 秒
+    private float fadeInDuration = 0.1f;           // 淡入时长 0.3 秒
+    private float fadeOutDuration = 0.3f;          // 淡出时长 0.7 秒
     private float transitionTime = 0;            // 当前过渡时间
     private boolean isClicked = false;           // 是否被点击的标志
-    boolean isAnimating = false;         // 是否正在进行动画
-    boolean fadingIn = true;
+    private boolean isAnimating = false;         // 是否正在进行动画
+    private boolean fadingIn = true;
 
     private FunctionInterfaceButton myFunction;
 

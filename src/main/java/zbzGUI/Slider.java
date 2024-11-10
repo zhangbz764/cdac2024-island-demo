@@ -11,18 +11,18 @@ import processing.core.PApplet;
  * @time 10:29
  */
 public class Slider extends Controller {
-    private float value;
-    private float min;
-    private float max;
+    private double value;
+    private double min;
+    private double max;
 
-    private float ratio;
+    private double ratio;
 
     private FunctionInterfaceSlider myFunction;
     private int currentColor;
 
-    float duration = 0.35f;              // 每段动画的总时长 0.5 秒
-    float transitionTime = 0;            // 当前过渡时间
-    boolean isMousePressed = false;      // 鼠标按下的状态
+    private float duration = 0.35f;              // 每段动画的总时长 0.5 秒
+    private float transitionTime = 0;            // 当前过渡时间
+    private boolean isMousePressed = false;      // 鼠标按下的状态
 
     /* ------------- constructor ------------- */
 
@@ -72,14 +72,14 @@ public class Slider extends Controller {
 
     /* ------------- setter & getter ------------- */
 
-    public Slider setRange(float min, float max) {
+    public Slider setRange(double min, double max) {
         this.min = min;
         this.max = max;
         this.ratio = value / (max - min);
         return this;
     }
 
-    public Slider setValue(float val) {
+    public Slider setValue(double val) {
         this.value = val;
         this.ratio = value / (max - min);
         return this;
@@ -127,7 +127,7 @@ public class Slider extends Controller {
 
         // slider value rectangle
         app.fill(currentColor);
-        app.rect(position[0], position[1], size[0] * ratio, size[1]);
+        app.rect(position[0], position[1], size[0] * (float) ratio, size[1]);
 
         // label
         app.fill(colorLabel);

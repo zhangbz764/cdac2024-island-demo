@@ -42,6 +42,12 @@ public class GUIManager {
         return imageButton;
     }
 
+    public BarChart addBarChart(String name) {
+        BarChart barChart = new BarChart(name);
+        this.controllers.add(barChart);
+        return barChart;
+    }
+
     /* ------------- member function: event listener ------------- */
 
     public void listenMouseClicked(float mouseX, float mouseY) {
