@@ -130,15 +130,15 @@ public class TestGUI extends PApplet {
                 .setPosition(100, 700)
                 .setSize(600, 250)
 
-                .setChartRange(0, 1)
+                .setChartRange(0, 10)
                 .setChartData(
                         new String[]{"Res", "Edu", "Com", "Ind"},
-                        new double[]{0.3, 0.1, 0.4, 0.2}
+                        new double[]{8.5, 7.8, 3.2, 0.6}
                 )
                 .setOriginLabel("0")
                 .setXAxisLabel("TYPE")
                 .setYAxisLabel("RATIO")
-                .showInteger(false)
+                .showInteger(true)
 
                 .setFont(font, 20)
 

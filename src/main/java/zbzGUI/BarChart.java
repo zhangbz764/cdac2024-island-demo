@@ -153,7 +153,7 @@ public class BarChart extends Controller {
             // data value
             app.textAlign(app.CENTER, app.BOTTOM);
             if (showInteger) {
-                app.text(Math.round(dataValue[i]), position[0] + i * spanPerData + paddingPerData + widthPerData * .5f, position[1] + size[1] - heightData[i] - fontSize * .3f);
+                app.text((int) Math.round(dataValue[i]), position[0] + i * spanPerData + paddingPerData + widthPerData * .5f, position[1] + size[1] - heightData[i] - fontSize * .3f);
             } else {
                 app.text(String.format("%.2f", dataValue[i]), position[0] + i * spanPerData + paddingPerData + widthPerData * .5f, position[1] + size[1] - heightData[i] - fontSize * .3f);
             }
