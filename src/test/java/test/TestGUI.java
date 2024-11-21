@@ -9,6 +9,10 @@ import zbzGUI.Controller;
 import zbzGUI.GUIManager;
 import zbzGUI.ImageButton;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 /**
  * description
  *
@@ -31,6 +35,7 @@ public class TestGUI extends PApplet {
     /* ------------- setup ------------- */
 
     private CameraController gcam;
+    private PeasyCam peasyCam;
 
     private GUIManager guiManager;
 
@@ -38,6 +43,8 @@ public class TestGUI extends PApplet {
     private int imgCount = 0;
 
     public void setup() {
+        surface.setLocation(500,500);
+
         this.gcam = new CameraController(this);
         gcam.setPanButton(CameraController.MOUSE_RIGHTBUTTON);
 
